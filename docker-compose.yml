@@ -1,0 +1,25 @@
+version: "3.6"
+services:
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - hasura_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespasssword
+  graphql-engine:
+    image: hasura/graphql-engine
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL:
+        postgres://postgres:postgrespasssword@postgres:5432/postgres
+        ## enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLE_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+volumes:
+  hasura_data:
